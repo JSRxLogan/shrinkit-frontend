@@ -40,7 +40,7 @@ const DetailedAnalytics = () => {
     function handleUrlToggle(newUrl) {
         const tempShowFull = !showFull;
         setShowFull(tempShowFull);
-        const MAX_LENGTH = 300; 
+        const MAX_LENGTH = 300;
         const tempIsLong = newUrl.length > MAX_LENGTH ? true : false;
         setIsLong(tempIsLong);
         const tempDisplayUrl = tempShowFull ? newUrl.url : `${newUrl.url.slice(0, MAX_LENGTH)}${tempIsLong ? "..." : ""}`;
@@ -48,42 +48,42 @@ const DetailedAnalytics = () => {
     }
 
     const fetchAnalytics = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get(`${API_BASE_URL}/api/analytics/detailed/${id}`, { withCredentials: true });
-                console.log('Response Data:', response.data);
-                setAnalyticsData(response.data);
+        try {
+            setLoading(true);
+            const response = await axios.get(`${API_BASE_URL}/api/analytics/detailed/${id}`, { withCredentials: true });
+            console.log('Response Data:', response.data);
+            setAnalyticsData(response.data);
 
-                const { newUrl, clicks } = response.data;
+            const { newUrl, clicks } = response.data;
 
-                setNewUrl(newUrl);
-                setClicks(clicks);
+            setNewUrl(newUrl);
+            setClicks(clicks);
 
-                const MAX_LENGTH = 300; // chars to show before truncation
+            const MAX_LENGTH = 300; // chars to show before truncation
 
-                const tempIsLong = newUrl.length > MAX_LENGTH? true : false;
-                setIsLong(tempIsLong);
-                const tempDisplayUrl = showFull ? newUrl.url : `${newUrl.url.slice(0, MAX_LENGTH)}${tempIsLong ? "..." : ""}`;
-                setDisplayUrl(tempDisplayUrl);
+            const tempIsLong = newUrl.length > MAX_LENGTH ? true : false;
+            setIsLong(tempIsLong);
+            const tempDisplayUrl = showFull ? newUrl.url : `${newUrl.url.slice(0, MAX_LENGTH)}${tempIsLong ? "..." : ""}`;
+            setDisplayUrl(tempDisplayUrl);
 
-                if (clicks.length) {
-                    const latestClickDate = clicks.length ? new Date(clicks[clicks.length - 1].time) : new Date();
-                    const defaultYear = latestClickDate.getFullYear();
-                    const defaultMonth = latestClickDate.getMonth() + 1; // JS months are 0-based, so add 1
-                    setSelectedYear(defaultYear);
-                    setSelectedMonth(defaultMonth);
-                }
-                setError(null);
-            } catch (err) {
-                console.error('Error fetching analytics:', err);
-                setError('Failed to load analytics data. Please try again later.');
-            } finally {
-                setLoading(false);
+            if (clicks.length) {
+                const latestClickDate = clicks.length ? new Date(clicks[clicks.length - 1].time) : new Date();
+                const defaultYear = latestClickDate.getFullYear();
+                const defaultMonth = latestClickDate.getMonth() + 1; // JS months are 0-based, so add 1
+                setSelectedYear(defaultYear);
+                setSelectedMonth(defaultMonth);
             }
-        };
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching analytics:', err);
+            setError('Failed to load analytics data. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        const verifyUser = async () => {
-                try {
+    const verifyUser = async () => {
+        try {
 
             const res = await axios.get(`${API_BASE_URL}/api/auth/verify`, {
                 withCredentials: true
@@ -109,7 +109,7 @@ const DetailedAnalytics = () => {
 
 
     useEffect(() => {
-        
+
         verifyUser();
 
         return () => {
@@ -240,7 +240,7 @@ const DetailedAnalytics = () => {
                                 <FiExternalLink className="text-gray-400" />
                             </div>
                         </div>
-                        
+
                         {/* Total Clicks */}
                         <div className="bg-gray-900 p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-gray-400 mb-2">
@@ -258,7 +258,7 @@ const DetailedAnalytics = () => {
                             </div>
                             <p className="text-gray-400">{formatDate(newUrl.createdAt)}</p>
                         </div>
-                        
+
                         {/* Created By */}
                         <div className="bg-gray-900 p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-gray-400 mb-2">
@@ -267,7 +267,7 @@ const DetailedAnalytics = () => {
                             </div>
                             <p className="text-gray-300">{newUrl.user?.username || 'Anonymous'}</p>
                         </div>
-                        
+
                         {/* Country Created */}
                         <div className="bg-gray-900 p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-gray-400 mb-2">
@@ -276,7 +276,7 @@ const DetailedAnalytics = () => {
                             </div>
                             <p className="text-gray-300">{newUrl.countryName || 'Unknown'}</p>
                         </div>
-                        
+
                         {/* Last Updated */}
                         <div className="bg-gray-900 p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-gray-400 mb-2">
@@ -288,29 +288,44 @@ const DetailedAnalytics = () => {
                     </div>
                 </div>
 
-                {/* --- Charts Section --- */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <ClicksVsDayChartContainer clicks={clicks} selectedMonth={selectedMonth} selectedYear={selectedYear} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  {/* Clicks vs Day */}
+  <ClicksVsDayChartContainer
+    clicks={clicks}
+    selectedMonth={selectedMonth}
+    selectedYear={selectedYear}
+  />
 
-                    <div className="bg-gray-800 rounded-xl shadow-lg p-6">
-                        <div className="flex items-center gap-2 text-gray-300 mb-4">
-                            <FiMap />
-                            <h2 className="text-xl font-semibold">Geographic Distribution</h2>
-                        </div>
-                        <div className="bg-gray-800 rounded-lg h-max-w-full p-0 md:p-4">
-                            {clicks ? (
-                                <GeoChoroplethMap clicks={clicks} />
-                            ) : (
-                                <p className="text-gray-400 flex items-center justify-center h-full">
-                                    Loading map…
-                                </p>
-                            )}
-                        </div>
-                    </div>
+  {/* Geographic Distribution */}
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4 flex flex-col">
+    <div className="flex items-center gap-2 text-gray-300 mb-3">
+      <FiMap />
+      <h2 className="text-lg md:text-xl font-semibold">
+        Geographic Distribution
+      </h2>
+    </div>
 
-                    <BrowserBreakdownChart clicks={clicks} />
-                    <DeviceOSBreakdownChart clicks={clicks} />
-                </div>
+    <div className="relative w-full flex-1">
+      {clicks ? (
+        <GeoChoroplethMap
+          clicks={clicks}
+          size="responsive" // keep it scalable
+        />
+      ) : (
+        <p className="text-gray-400 flex items-center justify-center h-full">
+          Loading map…
+        </p>
+      )}
+    </div>
+  </div>
+
+  {/* Browser Breakdown */}
+  <BrowserBreakdownChart clicks={clicks} />
+
+  {/* Device OS Breakdown */}
+  <DeviceOSBreakdownChart clicks={clicks} />
+</div>
+
 
                 {/* --- Raw Data Table --- */}
                 <div className="mt-8 bg-gray-800 rounded-xl shadow-lg p-6">

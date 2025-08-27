@@ -1,95 +1,106 @@
-import React from 'react';
-import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
-import { scaleQuantize } from 'd3-scale';
+import React, { useEffect, useState } from "react";
+import WorldMap from "react-svg-worldmap";
+import { scaleQuantize } from "d3-scale";
 
-const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
-
-// Map of country names in your clicks data to ISO_A3 codes
-
-function normalizeCountryName(name) {
-  if (!name) return '';
-  return name.trim().replace(/\s+/g, '_');
-}
-
-const countryNameToISO3 = {
-  India: "IND",
-  United_States: "USA",
-  Canada: "CAN",
-  Brazil: "BRA",
-  United_Kingdom: "GBR",
-  Germany: "DEU",
-  // Add more countries you expect here...
-};
-
-const countryNameToISO3_2 = { 
-  "India": "IND",
-  "United_States": "USA",
-  "Canada": "CAN",
-  "Brazil": "BRA",
-  "United Kingdom": "GBR",
-  "Germany": "DEU",
-  // add more countries as you spot them in your data
+// ISO2 country codes for react-svg-worldmap
+const countryNameToISO2 = {
+  India: "IN",
+  United_States: "US",
+  Canada: "CA",
+  Brazil: "BR",
+  "United Kingdom": "GB",
+  Germany: "DE",
+  // add more countries as needed...
 };
 
 function aggregateClicksByCountry(clicks) {
   const counts = {};
 
   clicks.forEach(({ country }) => {
-    if (!country) return; // skip unknown
+    if (!country) return;
 
-    const isoCode = countryNameToISO3_2[country];  // use new map here
-    if (!isoCode) return; // skip if no mapping
+    const isoCode = countryNameToISO2[country];
+    if (!isoCode) return;
 
     counts[isoCode] = (counts[isoCode] || 0) + 1;
   });
 
-  return counts;
+  // convert to array for react-svg-worldmap
+  return Object.entries(counts).map(([country, value]) => ({
+    country,
+    value,
+  }));
 }
 
 function GeoChoroplethMap({ clicks }) {
-  const [geoData, setGeoData] = React.useState({});
+  const [geoData, setGeoData] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (clicks) {
-      console.log('Processing clicks for geo data:', aggregateClicksByCountry(clicks));
-      setGeoData(aggregateClicksByCountry(clicks));
+      const data = aggregateClicksByCountry(clicks);
+      setGeoData(data);
     }
   }, [clicks]);
 
+  // d3 scale to color intensity
   const colorScale = scaleQuantize()
-    .domain([0, Math.max(1, ...Object.values(geoData))]) // prevent max=0
+    .domain([0, Math.max(1, ...geoData.map((d) => d.value))])
     .range([
-      '#e0f3f8',
-      '#a6bddb',
-      '#74a9cf',
-      '#3690c0',
-      '#0570b0',
-      '#034e7b',
+      "#e0f3f8",
+      "#a6bddb",
+      "#74a9cf",
+      "#3690c0",
+      "#0570b0",
+      "#034e7b",
     ]);
 
+  // helper: find clicks by countryCode
+  const getClicksForCountry = (countryCode) => {
+    const entry = geoData.find((d) => d.country === countryCode);
+    return entry ? entry.value : 0;
+  };
+
   return (
-    <ComposableMap>
-      <Geographies geography={geoUrl}>
-        {({ geographies }) =>
-          geographies.map((geo) => {
-            const isoCode = countryNameToISO3_2[geo.properties.name];
-            const clicksCount = geoData[isoCode] || 0;
-            return (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill={clicksCount ? colorScale(clicksCount) : '#EEE'}
-                style={{
-                  default: { outline: 'none' },
-                  hover: { fill: '#F53', outline: 'none' },
-                  pressed: { outline: 'none' },
-                }}
-              />
-            );
-          })
-        }
-      </Geographies>
-    </ComposableMap>
+    <div className="w-full flex flex-col items-center">
+      <div className="w-full h-[400px]">
+        <WorldMap
+          color="#0570b0"
+          valueSuffix=" clicks"
+          size="responsive"
+          data={geoData}
+          styleFunction={(context) => {
+            const value = context.countryValue || 0;
+            return {
+              fill: value ? colorScale(value) : "#EEE",
+              stroke: "black",
+              strokeWidth: 0.5,
+              outline: "none",
+              cursor: "pointer",
+            };
+          }}
+          onClickFunction={({ countryName, countryCode }) => {
+            setSelectedCountry({
+              name: countryName,
+              clicks: getClicksForCountry(countryCode),
+            });
+          }}
+          onMouseOverFunction={({ countryName, countryCode }) => {
+            setSelectedCountry({
+              name: countryName,
+              clicks: getClicksForCountry(countryCode),
+            });
+          }}
+        />
+      </div>
+
+      {/* Info tag below map */}
+      {selectedCountry && (
+        <div className="mt-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg text-[18px]">
+          {selectedCountry.name}: {selectedCountry.clicks} clicks
+        </div>
+      )}
+    </div>
   );
 }
 
