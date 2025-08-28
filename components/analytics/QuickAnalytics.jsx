@@ -22,7 +22,7 @@ const QuickAnalytics = () => {
       const response = await axios.get(`${API_BASE_URL}/api/analytics/quick/${id}`, { withCredentials: true });
 
       if (response.data.success) {
-        const qrCode = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${API_BASE_URL}/analytics/quick/${id}`
+        const qrCode = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${API_BASE_URL}/api/${id}`
         const data = response.data.newUrl;
         data.qrCode = qrCode; // Add QR code to the data
         setUrlData(data);
