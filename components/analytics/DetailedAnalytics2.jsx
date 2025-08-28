@@ -288,43 +288,43 @@ const DetailedAnalytics = () => {
                     </div>
                 </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  {/* Clicks vs Day */}
-  <ClicksVsDayChartContainer
-    clicks={clicks}
-    selectedMonth={selectedMonth}
-    selectedYear={selectedYear}
-  />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Clicks vs Day */}
+                    <ClicksVsDayChartContainer
+                        clicks={clicks}
+                        selectedMonth={selectedMonth}
+                        selectedYear={selectedYear}
+                    />
 
-  {/* Geographic Distribution */}
-  <div className="bg-gray-800 rounded-xl shadow-lg p-4 flex flex-col">
-    <div className="flex items-center gap-2 text-gray-300 mb-3">
-      <FiMap />
-      <h2 className="text-lg md:text-xl font-semibold">
-        Geographic Distribution
-      </h2>
-    </div>
+                    {/* Geographic Distribution */}
+                    <div className="bg-gray-800 rounded-xl shadow-lg p-4 flex flex-col">
+                        <div className="flex items-center gap-2 text-gray-300 mb-3">
+                            <FiMap />
+                            <h2 className="text-lg md:text-xl font-semibold">
+                                Geographic Distribution
+                            </h2>
+                        </div>
 
-    <div className="relative w-full flex-1">
-      {clicks ? (
-        <GeoChoroplethMap
-          clicks={clicks}
-          size="responsive" // keep it scalable
-        />
-      ) : (
-        <p className="text-gray-400 flex items-center justify-center h-full">
-          Loading map…
-        </p>
-      )}
-    </div>
-  </div>
+                        <div className="relative w-full flex-1">
+                            {clicks ? (
+                                <GeoChoroplethMap
+                                    clicks={clicks}
+                                    size="responsive" // keep it scalable
+                                />
+                            ) : (
+                                <p className="text-gray-400 flex items-center justify-center h-full">
+                                    Loading map…
+                                </p>
+                            )}
+                        </div>
+                    </div>
 
-  {/* Browser Breakdown */}
-  <BrowserBreakdownChart clicks={clicks} />
+                    {/* Browser Breakdown */}
+                    <BrowserBreakdownChart clicks={clicks} />
 
-  {/* Device OS Breakdown */}
-  <DeviceOSBreakdownChart clicks={clicks} />
-</div>
+                    {/* Device OS Breakdown */}
+                    <DeviceOSBreakdownChart clicks={clicks} />
+                </div>
 
 
                 {/* --- Raw Data Table --- */}
