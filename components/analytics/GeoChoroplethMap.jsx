@@ -63,7 +63,7 @@ function GeoChoroplethMap({ clicks }) {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="w-full h-[400px]">
+      <div className=" h-[300px]">
         <WorldMap
           color="#0570b0"
           valueSuffix=" clicks"

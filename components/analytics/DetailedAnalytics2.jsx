@@ -56,6 +56,9 @@ const DetailedAnalytics = () => {
 
             const { newUrl, clicks } = response.data;
 
+            console.log('New URL:', newUrl);
+            console.log('Clicks:', clicks);
+
             setNewUrl(newUrl);
             setClicks(clicks);
 
@@ -226,7 +229,7 @@ const DetailedAnalytics = () => {
                         <div className="bg-gray-900 p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-gray-400 mb-2">
                                 <FiLink />
-                                <h3 className="font-medium">Short URL</h3>
+                                <h3 className="font-medium">Short ID</h3>
                             </div>
                             <div className="flex items-center gap-2">
                                 <a
@@ -235,7 +238,7 @@ const DetailedAnalytics = () => {
                                     rel="noopener noreferrer"
                                     className="text-indigo-400 hover:text-indigo-300 hover:underline font-mono"
                                 >
-                                    {newUrl.shortUrl}
+                                    {newUrl.shortId}
                                 </a>
                                 <FiExternalLink className="text-gray-400" />
                             </div>
@@ -305,7 +308,7 @@ const DetailedAnalytics = () => {
                             </h2>
                         </div>
 
-                        <div className="relative w-full flex-1">
+                        <div className="relative w-full min-h-[500px] flex flex-col">
                             {clicks ? (
                                 <GeoChoroplethMap
                                     clicks={clicks}

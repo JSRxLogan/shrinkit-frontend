@@ -35,7 +35,7 @@ const BrowserBreakdownChart = ({ clicks = [] }) => {
                 <FiGlobe />
                 <h2 className="text-xl font-semibold text-gray-300">Browser Breakdown</h2>
             </div>
-            <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center p-2 relative">
+            <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center  relative">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         {/* Background track ring */}
