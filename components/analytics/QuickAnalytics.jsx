@@ -40,7 +40,6 @@ const QuickAnalytics = () => {
 
   const verifyUser = async () => {
     try {
-
       const res = await axios.get(`${API_BASE_URL}/api/auth/verify`, {
         withCredentials: true
       })
